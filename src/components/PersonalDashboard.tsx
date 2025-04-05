@@ -4,19 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import MedHistoryQuiz from './MedHistoryQuiz';
 
-// These will be imported in the future
-// import UserProfile from './components/UserProfile';
-// import Camera from './components/Camera';
-// import History from './components/History';
-
 export default function PersonalDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
   const [showQuiz, setShowQuiz] = useState(false);
   const navigate = useNavigate();
   
-  // Check if user has completed the medical history quiz
   useEffect(() => {
-    // Always show the quiz, regardless of previous completions
     setShowQuiz(true);
   }, []);
 
@@ -30,29 +23,19 @@ export default function PersonalDashboard() {
   };
   
   const handleQuizComplete = (quizData) => {
-    // Here you would typically save the quiz data to your database
     console.log('Quiz data:', quizData);
-    
-    // For now, we'll just mark it as completed in localStorage
     localStorage.setItem('medHistoryQuizData', JSON.stringify(quizData));
-    
-    // Even if they complete it, we don't mark it as permanently completed
-    // so it will show up next time too
-    
-    // Hide the quiz
     setShowQuiz(false);
   };
   
   const handleQuizSkip = () => {
-    // Hide the quiz without marking as completed
     setShowQuiz(false);
   };
 
-  // Placeholder component for tabs that are not yet implemented
   const WorkInProgress = ({ componentName }: { componentName: string }) => (
-    <div className="flex flex-col items-center justify-center h-96">
-      <div className="text-3xl font-bold text-gray-300 mb-4">Work In Progress</div>
-      <div className="text-gray-500">{componentName} component will be implemented here</div>
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-8rem)] md:h-96">
+      <div className="text-2xl md:text-3xl font-bold text-gray-300 mb-4">Work In Progress</div>
+      <div className="text-gray-500 text-center px-4">{componentName} component will be implemented here</div>
     </div>
   );
 
@@ -69,29 +52,26 @@ export default function PersonalDashboard() {
     }
   };
 
-  // If showing quiz, return the quiz component overlay
   if (showQuiz) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* Header remains visible during quiz */}
         <header className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-indigo-600">Skinder</h1>
+          <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 className="text-xl md:text-2xl font-bold text-indigo-600">Skinder</h1>
             <button 
               onClick={handleSignOut}
               className="flex items-center text-gray-600 hover:text-indigo-600"
             >
-              <LogOut className="h-5 w-5 mr-2" />
-              <span>Sign out</span>
+              <LogOut className="h-5 w-5" />
+              <span className="ml-2 hidden sm:inline">Sign out</span>
             </button>
           </div>
         </header>
         
-        {/* Quiz displayed in main content area with overlay styling */}
         <div className="flex-1 flex items-center justify-center p-4 bg-gray-50">
           <div className="w-full max-w-4xl">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Medical History Questionnaire</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Medical History Questionnaire</h2>
               <p className="text-gray-600 mb-1">This questionnaire helps us better assess your skin health.</p>
               <p className="text-gray-600 text-sm italic">This will be shown each time you log in to update your information.</p>
             </div>
@@ -106,28 +86,27 @@ export default function PersonalDashboard() {
     );
   }
 
-  // Regular dashboard view when not showing the quiz
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-indigo-600">Skinder</h1>
+      <header className="bg-white shadow fixed top-0 left-0 right-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-xl md:text-2xl font-bold text-indigo-600">Skinder</h1>
           <button 
             onClick={handleSignOut}
             className="flex items-center text-gray-600 hover:text-indigo-600"
           >
-            <LogOut className="h-5 w-5 mr-2" />
-            <span>Sign out</span>
+            <LogOut className="h-5 w-5" />
+            <span className="ml-2 hidden sm:inline">Sign out</span>
           </button>
         </div>
       </header>
 
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl mx-auto px-4 py-6 mt-16 mb-16 md:mb-0">
         <div className="bg-white shadow rounded-lg overflow-hidden">
-          {/* Tab navigation */}
-          <div className="flex border-b">
+          {/* Desktop Navigation - Top */}
+          <div className="hidden md:flex border-b">
             <button
               className={`flex items-center px-4 py-3 font-medium text-sm border-b-2 ${
                 activeTab === 'profile'
@@ -166,11 +145,52 @@ export default function PersonalDashboard() {
           </div>
 
           {/* Tab content */}
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {renderTabContent()}
           </div>
         </div>
       </main>
+
+      {/* Mobile Navigation - Bottom */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
+        <div className="flex justify-around items-center">
+          <button
+            className={`flex flex-col items-center px-4 py-2 ${
+              activeTab === 'profile'
+                ? 'text-indigo-600'
+                : 'text-gray-500 hover:text-indigo-600'
+            }`}
+            onClick={() => setActiveTab('profile')}
+          >
+            <User className="h-6 w-6" />
+            <span className="text-xs mt-1">Profile</span>
+          </button>
+
+          <button
+            className={`flex flex-col items-center px-4 py-2 ${
+              activeTab === 'camera'
+                ? 'text-indigo-600'
+                : 'text-gray-500 hover:text-indigo-600'
+            }`}
+            onClick={() => setActiveTab('camera')}
+          >
+            <Camera className="h-6 w-6" />
+            <span className="text-xs mt-1">Camera</span>
+          </button>
+
+          <button
+            className={`flex flex-col items-center px-4 py-2 ${
+              activeTab === 'history'
+                ? 'text-indigo-600'
+                : 'text-gray-500 hover:text-indigo-600'
+            }`}
+            onClick={() => setActiveTab('history')}
+          >
+            <History className="h-6 w-6" />
+            <span className="text-xs mt-1">History</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }
