@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { User, Camera, History, LogOut } from 'lucide-react';
+import { User, Camera as CameraIcon, History as HistoryIcon, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import MedHistoryQuiz from './MedHistoryQuiz';
+import Camera from './Camera';
+import Profile from './Profile';
+import History from './History';
 
 export default function PersonalDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -32,23 +35,16 @@ export default function PersonalDashboard() {
     setShowQuiz(false);
   };
 
-  const WorkInProgress = ({ componentName }: { componentName: string }) => (
-    <div className="flex flex-col items-center justify-center h-[calc(100vh-8rem)] md:h-96">
-      <div className="text-2xl md:text-3xl font-bold text-gray-300 mb-4">Work In Progress</div>
-      <div className="text-gray-500 text-center px-4">{componentName} component will be implemented here</div>
-    </div>
-  );
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'profile':
-        return <WorkInProgress componentName="UserProfile" />;
+        return <Profile />;
       case 'camera':
-        return <WorkInProgress componentName="Camera" />;
+        return <Camera />;
       case 'history':
-        return <WorkInProgress componentName="History" />;
+        return <History />;
       default:
-        return <WorkInProgress componentName="Unknown" />;
+        return <Profile />;
     }
   };
 
@@ -127,7 +123,7 @@ export default function PersonalDashboard() {
               } focus:outline-none transition duration-150 ease-in-out`}
               onClick={() => setActiveTab('camera')}
             >
-              <Camera className="h-5 w-5 mr-2" />
+              <CameraIcon className="h-5 w-5 mr-2" />
               Camera
             </button>
 
@@ -139,7 +135,7 @@ export default function PersonalDashboard() {
               } focus:outline-none transition duration-150 ease-in-out`}
               onClick={() => setActiveTab('history')}
             >
-              <History className="h-5 w-5 mr-2" />
+              <HistoryIcon className="h-5 w-5 mr-2" />
               History
             </button>
           </div>
@@ -174,7 +170,7 @@ export default function PersonalDashboard() {
             }`}
             onClick={() => setActiveTab('camera')}
           >
-            <Camera className="h-6 w-6" />
+            <CameraIcon className="h-6 w-6" />
             <span className="text-xs mt-1">Camera</span>
           </button>
 
@@ -186,7 +182,7 @@ export default function PersonalDashboard() {
             }`}
             onClick={() => setActiveTab('history')}
           >
-            <History className="h-6 w-6" />
+            <HistoryIcon className="h-6 w-6" />
             <span className="text-xs mt-1">History</span>
           </button>
         </div>

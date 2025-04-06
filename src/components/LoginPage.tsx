@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Lock, Mail, User, Stethoscope } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -9,12 +9,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check for success message from signup page
+    if (location.state && location.state.message) {
+      setSuccessMessage(location.state.message);
+    }
+  }, [location]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccessMessage('');
     
     try {
       const { error, data } = await supabase.auth.signInWithPassword({
@@ -38,6 +48,7 @@ export default function LoginPage() {
     setEmail('');
     setPassword('');
     setError('');
+    setSuccessMessage('');
   };
 
   const handleBackToSelection = () => {
@@ -45,6 +56,7 @@ export default function LoginPage() {
     setEmail('');
     setPassword('');
     setError('');
+    setSuccessMessage('');
   };
 
   if (userType === null) {
@@ -75,6 +87,15 @@ export default function LoginPage() {
               <p className="text-xs text-gray-500 mt-1 text-center">Access patient data and diagnostic tools</p>
             </button>
           </div>
+          
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-indigo-600 hover:text-indigo-800 font-medium">
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -89,6 +110,12 @@ export default function LoginPage() {
           </h1>
           <p className="text-gray-600 mt-2">Please sign in to your account</p>
         </div>
+        
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg">
+            {successMessage}
+          </div>
+        )}
         
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
@@ -137,13 +164,22 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
           
-          <button
-            type="button"
-            onClick={handleBackToSelection}
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Back to selection
-          </button>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={handleBackToSelection}
+              className="flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Back to selection
+            </button>
+            
+            <Link
+              to="/signup"
+              className="flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Create account
+            </Link>
+          </div>
         </form>
       </div>
     </div>
